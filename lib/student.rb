@@ -62,50 +62,74 @@ class Student
     DB[:conn].execute(sql)
   end
 
-  def self.all_student_in_grade_9
+  def self.all_students_in_grade_9
     sql = << -SQL
-      SELECT * FROM students 
+      SELECT COUNT (*) 
+      FROM students 
       WHERE grade = 9
-
+    SQL
       # convert to object - call .new_from_db
+
+    DB[:conn].execute(sql).map do |row|
+      self.new_from_db(row)
+    end
 
   end
 
   def self.students_below_12th_grade
     sql = << -SQL
-    SELECT * FROM students
-    WHERE grade < 12
+      SELECT * FROM students
+      WHERE grade < 12
+    SQL
 
+    DB[:conn].execute(sql).map do |row|
+      self.new_from_db(row)
+    end
     # covert to object - call .new_from_db
 
   end
 
   def self.first_X_students_in_grade_10(number_of_students)
     sql = << -SQL
-    SELECT * FROM students
-    WHERE grade = 10 
-
+      SELECT * FROM students
+      WHERE grade = 10 
+      ORDER BY students.id
+      LIMIT ?
+    SQL
     # covvert to object - call .new_from_db
+    DB[:conn].execute(sql, number_of_students).map do |row|
+      self.new_from_db(row)
+    end
 
   end
 
   def self.first_student_in_grade_10
   
     sql = << - SQL
-    SELECT * FROM students
-    WHERE grade = 10
+      SELECT * FROM students
+      WHERE grade = 10
+      ORDER BY students.id LIMIT 1
+    SQL
 
     # covert to object - call .new_from_db
 
+    DB[:conn].execute(sql).map do |row|
+      self.new_from_db(row)
+    end.first
 
   end
 
   def self.all_students_in_grade_X(grade)
 
     sql == < -SQL
-    SELECT * FROM students
-    WHERE grade 
+      SELECT * FROM students
+      WHERE grade = ?
+      ORDER BY students.id
+    SQL
 
+    DB[:conn].execute(sql).map do |row|
+      self.new_from_db(row)      
+    end
 
   end
 
